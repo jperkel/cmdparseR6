@@ -20,10 +20,23 @@ myargs <- list(
 )
 
 mycmds <- list(
-  list(command = "add", subcmd = c('user', 'account'), help = "add help text"),
-  list(command = "delete", subcmd = c('user', 'account', 'all'), help = "delete help text"),
-  list(command = "edit", subcmd = c('user', 'account'), help = "edit help text"),
-  list(command = "yoink", help = "yoink")
+  list(command = "add", 
+       subcmd = list(
+         list(name = 'user', help = 'add user'),
+         list(name = 'account', help = 'add account')), 
+         help = "add command"),
+  list(command = "delete", 
+       subcmd = list(
+         list(name = 'user', help = 'delete user'),
+         list(name = 'account', help = 'delete account'),
+         list(name = 'all', help = 'delete all')),
+       help = "delete command"),
+  list(command = "edit", 
+       subcmd = list(
+         list(name = 'user', help = 'edit user'),
+         list(name = 'account', help = 'edit account')), 
+       help = "edit command"),
+  list(command = "yoink", help = "yoink command")
 )
 
 cmdline <- "delete account --verbose --print -o /path/to/my/file -u JeffreyPerkel -k key1 --keyword=key2 -i infile.txt -k key3 -v"
@@ -103,7 +116,7 @@ Parser <- R6Class("Parser",
                        # if command has listed subcmd(s), one must be used
                        # assume the next element in cmdline is a subcmd
                        if (!is.null(cmd$subcmd)) {
-                         if (!spl[i] %in% cmd$subcmd) {
+                         if (!spl[i] %in% get_element(cmd$subcmd, 'name')) {
                            stop(paste0("\'", spl[i], "\' is not a sub-command of \'", cmd$command, "\'"))
                          }
                          mydata[['subcmd']] <- spl[i]
