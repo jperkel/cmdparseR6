@@ -55,10 +55,12 @@ Parser <- R6Class("Parser",
                    name = NULL,
                    desc = NULL,
                    ver = NULL, 
-                   initialize = function(name, desc, ver) {
+                   help = NULL, 
+                   initialize = function(name, desc, ver, help = TRUE) {
                      self$name = name
                      self$desc = desc
                      self$ver = ver
+                     self$help = help
                      private$cmdline = paste(commandArgs(trailingOnly = T), collapse = ' ')
                    },
                    add_arguments = function(...) {
@@ -74,6 +76,18 @@ Parser <- R6Class("Parser",
                        private$cmds <- append(private$cmds, cmd)
                      }
                      invisible(self)
+                   },
+                   usage = function() {
+                     cat(
+                       # get executable name
+                       basename(here::here()),
+                       if (!is.null(get_element(private$cmds, 'command'))) "[COMMAND]",
+                       if (!is.null(get_element(private$cmds, 'subcmd'))) "[SUBCOMMAND]",
+                       if (!is.null(get_element(private$args, 'lparam'))) "<OPTIONAL ARGUMENTS>",
+                       "\n\tDesc:", self$desc, "\n",
+                       "\tVer:", self$ver, "\n", 
+                       sep = ' '
+                       )
                    },
                    parse_command_line = function(cmdline = NULL) {
                      # if a cmdline is passed as a function arg, 
@@ -151,7 +165,7 @@ Parser <- R6Class("Parser",
                          i <- i + 1
                          next
                        }
-
+                       
                        switch(record$type,
                               "bool" = {
                                 mydata[[record$variable]] <- !record$default
