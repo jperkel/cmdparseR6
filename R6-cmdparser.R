@@ -3,20 +3,16 @@ suppressPackageStartupMessages( {
   library(R6)
 })
 
-# fn <- function(...) {
-#   vars <- list(...)
-#   vars
-# }
-# 
-# fn(a = "a",b = "b",i = "--infile=xyz")
 
+# allowed 'type' = (bool, value, multi, count, range)
 myargs <- list(
   list(lparam = "print", sparam = "p", variable = "print", default = FALSE, type = "bool"),
-  list(lparam = "outfile", sparam = "o", variable = "outfile", default = NA, type = "value"),
-  list(lparam = "username", sparam = "u", variable = "username", default = NA, type = "value"),
+  list(lparam = "outfile", sparam = "o", variable = "outfile", default = NULL, type = "value"),
+  list(lparam = "username", sparam = "u", variable = "username", default = NULL, type = "value"),
   list(lparam = "keyword", sparam = "k", variable = "keys", default = NULL, type = "multi"),
-  list(lparam = "infile", sparam = "i", variable = "infile", default = NA, type = "value"),
-  list(lparam = "verbose", sparam = "v", variable = "verbose", default = 0, type = "count")
+  list(lparam = "infile", sparam = "i", variable = "infile", default = NULL, type = "value"),
+  list(lparam = "verbose", sparam = "v", variable = "verbose", default = 0, type = "count"),
+  list(lparam = "date", sparam = "d", variable = "date", default = NULL, type = "range")
 )
 
 mycmds <- list(
@@ -106,7 +102,7 @@ Parser <- R6Class("Parser",
                      # if command is possible, one must be provided
                      if (length(private$cmds) > 0) {
                        if (!spl[i] %in% get_element(private$cmds, 'command')) {
-                         stop(paste("Unknown command:", spl[i]))
+                         stop(paste("Unknown command:", spl[i]), call. = FALSE)
                        }
                        # add [[1]] to get a list w/ named objects
                        cmd <- private$cmds[which(get_element(private$cmds, 'command') == spl[i])][[1]]
@@ -117,38 +113,18 @@ Parser <- R6Class("Parser",
                        # assume the next element in cmdline is a subcmd
                        if (!is.null(cmd$subcmd)) {
                          if (!spl[i] %in% get_element(cmd$subcmd, 'name')) {
-                           stop(paste0("\'", spl[i], "\' is not a sub-command of \'", cmd$command, "\'"))
+                           stop(paste0("\'", spl[i], "\' is not a sub-command of \'", cmd$command, "\'"), call. = FALSE)
                          }
                          mydata[['subcmd']] <- spl[i]
-                         # if (length(cmd_record) > 0) {
-                         # tmp <- NULL 
-                         # for (j in seq_along(l_subcmds)) {
-                         #   if (is.null(l_subcmds[[j]]$parent) || l_subcmds[[j]]$parent == spl[i]) {
-                         #     # tmp <- append(private$subcmds[[j]], tmp)
-                         #     tmp <- c(tmp, j)
-                         #   }
-                         # }
-                         # # print (tmp)
-                         # l_subcmds <- l_subcmds[tmp]
                          i <- i + 1
                        }
                      } # end command processing
-
-                     # process sub-command, if any
-                     # if subcommand is possible, one must be provided
-                     # if (length(l_subcmds) > 0) {
-                     #   if (!spl[i] %in% get_element(l_subcmds, 'subcmd')) {
-                     #     stop(paste0("\'", spl[i], "\' is not a sub-command of \'", mydata[["command"]], "\'"))
-                     #   }
-                     #   mydata[["subcmd"]] <- spl[i]
-                     #   i <- i + 1
-                     # }
 
                      while (i <= length(spl)) {
                        if (is_lparam(spl[i])) {
                          lparam <- stringr::str_remove(spl[i], '^--')
                          if (!lparam %in% get_element(private$args, 'lparam')) {
-                           warning(paste("Unknown parameter:", spl[i]))
+                           warning(paste("Unknown parameter:", spl[i]), call. = FALSE)
                            mydata[["unknowns"]] <- c(mydata[["unknowns"]], spl[i])
                            # move past this param
                            i <- i + 1
@@ -159,7 +135,7 @@ Parser <- R6Class("Parser",
                        else if (is_sparam(spl[i])) {
                          sparam <- stringr::str_remove(spl[i], '^-')
                          if (!sparam %in% get_element(private$args, 'sparam')) {
-                           warning(paste("Unknown parameter:", spl[i]))
+                           warning(paste("Unknown parameter:", spl[i]), call. = FALSE)
                            mydata[["unknowns"]] <- c(mydata[["unknowns"]], spl[i])
                            # move past this param
                            i <- i + 1
@@ -170,7 +146,7 @@ Parser <- R6Class("Parser",
                        else {
                          unk <- unk + 1
                          mydata[["unknowns"]][unk] <- spl[i]
-                         warning(paste("Unknown param:", spl[i]))
+                         warning(paste("Unknown param:", spl[i]), call. = FALSE)
                          # move past this param
                          i <- i + 1
                          next
@@ -192,7 +168,13 @@ Parser <- R6Class("Parser",
                               "count" = {
                                 mydata[[record$variable]] <- mydata[[record$variable]] + 1
                               },
-                              stop(paste("Unknown arg type:", record$type))
+                              "range" = {
+                                s <- strsplit(spl[i+1], ':')[[1]]
+                                mydata[[paste0(record$variable, 1)]] <- s[1]
+                                mydata[[paste0(record$variable, 2)]] <- s[2]
+                                i <- i + 1
+                              },
+                              stop(paste("Unknown variable type:", record$type), call. = FALSE)
                        )
                        i <- i + 1
                      }
@@ -212,6 +194,54 @@ Parser <- R6Class("Parser",
                    cmds = list()
                  )
 )
+
+
+parse_date <- function(d) {
+  year <- NA
+  month <- NA
+  day <- NA
+  error <- FALSE 
+  
+  if (grepl('^[0-9]{4}-[0-9]{2}-[0-9]{2}$', d) == TRUE) {
+    myDate <- try(as.Date (d, format = "%Y-%m-%d"))
+    if (class (myDate) == "try-error" || is.na(myDate)) {
+      error <- TRUE
+    }
+    year <- as.integer(format(myDate, "%Y"))
+    month <- as.integer(format(myDate, "%m"))
+    day <- as.integer(format(myDate, "%d"))
+  }
+  else if (grepl('^[0-9]{8}$', d) == TRUE) {
+    myDate <- try(as.Date (d, format = "%Y%m%d"))
+    if (class (myDate) == "try-error" || is.na(myDate)) {
+      error <- TRUE
+    }
+    year <- as.integer(format(myDate, "%Y"))
+    month <- as.integer(format(myDate, "%m"))
+    day <- as.integer(format(myDate, "%d"))
+  }
+  else if (grepl('^[0-9]{4}-[0-9]{2}$', d) == TRUE) {
+    year <- as.integer(substr(d, 1, 4))
+    month <- as.integer(substr(d, 6, 7))
+    if ( (is.na(year)) ||
+         (is.na(month)) ||
+         !(month %in% 1:12)) {
+      error <- TRUE
+    }
+  }
+  else if (grepl('^[0-9]{4}$', d) == TRUE) {
+    year <- as.integer(d)
+    if (is.na(year)) {
+      error <- TRUE
+    }
+  }
+  else {
+    error <- TRUE
+  }
+  if (error) stop (paste("parse_date(): Bad date format:", d), call. = FALSE)
+  return(c(year, month, day))
+} # parse_date
+
 
 p <- Parser$new('myprog', 'myprog desc', '0.0.1')
 p$add_arguments(myargs)$
