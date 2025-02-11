@@ -6,13 +6,13 @@ suppressPackageStartupMessages( {
 
 # allowed 'type' = (bool, value, multi, count, range)
 myargs <- list(
-  list(lparam = "print", sparam = "p", variable = "print", default = FALSE, type = "bool"),
-  list(lparam = "outfile", sparam = "o", variable = "outfile", default = NULL, type = "value"),
-  list(lparam = "username", sparam = "u", variable = "username", default = NULL, type = "value"),
-  list(lparam = "keyword", sparam = "k", variable = "keys", default = NULL, type = "multi"),
-  list(lparam = "infile", sparam = "i", variable = "infile", default = NULL, type = "value"),
-  list(lparam = "verbose", sparam = "v", variable = "verbose", default = 0, type = "count"),
-  list(lparam = "date", sparam = "d", variable = "date", default = NULL, type = "range")
+  list(lparam = "print", sparam = "p", variable = "print", default = FALSE, type = "bool", help = 'print output'),
+  list(lparam = "outfile", sparam = "o", variable = "outfile", default = NULL, type = "value", help = 'specify output file'),
+  list(lparam = "username", sparam = "u", variable = "username", default = NULL, type = "value", help = 'user name'),
+  list(lparam = "keyword", sparam = "k", variable = "keys", default = NULL, type = "multi", help = 'keywords for search'),
+  list(lparam = "infile", sparam = "i", variable = "infile", default = NULL, type = "value", help = 'input file'),
+  list(lparam = "verbose", sparam = "v", variable = "verbose", default = 0, type = "count", help = 'verbose?'),
+  list(lparam = "date", sparam = "d", variable = "date", default = NULL, type = "range", help = 'date range')
 )
 
 mycmds <- list(
@@ -88,6 +88,31 @@ Parser <- R6Class("Parser",
                        "\tVer:", self$ver, "\n", 
                        sep = ' '
                        )
+                     # get command names and alphabetize
+                     commands <- sort(get_element(private$cmds, 'command'))
+                     cat("\tCOMMANDS:\n")
+                     for (cmd in commands) {
+                       mycmd <- private$cmds[which(get_element(private$cmds, 'command') == cmd)][[1]]
+                       subcmds <- sort(get_element(mycmd$subcmd, 'name'))
+                       cat ('\t\t', mycmd$command, '--', mycmd$help, '\n')
+                       if (!is.null(subcmds)) {
+                         cat("\t\t\tSUBCOMMANDS:\n")
+                         for (subcmd in subcmds) {
+                           mysubcmd <- mycmd$subcmd[which(get_element(mycmd$subcmd, 'name') == subcmd)][[1]]
+                           # print (mysubcmd)
+                           cat ('\t\t\t', mysubcmd$name, '--', mysubcmd$help, '\n')
+                         }
+                       }
+                     } # command processing
+                     # add help command
+                     # l_args = local copy of private$args
+                     l_args <- append(private$args, list(list(lparam = 'help', sparam = 'h', help = 'show help')))
+                     args <- sort(get_element(l_args, 'lparam'))
+                     cat("\n\tARGUMENTS:\n")
+                     for (arg in args) {
+                       myarg <- l_args[which(get_element(l_args, 'lparam') == arg)][[1]]
+                       cat('\t\t', paste0('--', myarg$lparam), paste0('(-', myarg$sparam, ') --'), myarg$help, '\n')
+                     }
                    },
                    parse_command_line = function(cmdline = NULL) {
                      # if a cmdline is passed as a function arg, 
