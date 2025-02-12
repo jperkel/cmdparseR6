@@ -5,37 +5,37 @@ suppressPackageStartupMessages( {
 
 
 # allowed 'type' = (bool, value, multi, count, range)
-myargs <- list(
-  list(lparam = "--print", variable = "print", default = FALSE, type = "bool", help = 'print output'),
-  list(lparam = "--outfile", sparam = "-o", variable = "outfile", default = NULL, type = "value", help = 'specify output file'),
-  list(lparam = "--username", sparam = "-u", variable = "username", default = NULL, type = "value", help = 'user name'),
-  list(lparam = "--keyword", sparam = "-k", variable = "keys", default = NULL, type = "multi", help = 'keywords for search'),
-  list(lparam = "--infile", sparam = "-i", variable = "infile", default = NULL, type = "value", help = 'input file'),
-  list(lparam = "--verbose", sparam = "-v", variable = "verbose", default = 0, type = "count", help = 'verbose?'),
-  list(lparam = "--date", sparam = "-d", variable = "date", default = NULL, type = "range", help = 'date range')
-)
-
-mycmds <- list(
-  list(command = "add", 
-       subcmd = list(
-         list(name = 'user', help = 'add user'),
-         list(name = 'account', help = 'add account')), 
-         help = "add command"),
-  list(command = "delete", 
-       subcmd = list(
-         list(name = 'user', help = 'delete user'),
-         list(name = 'account', help = 'delete account'),
-         list(name = 'all', help = 'delete all')),
-       help = "delete command"),
-  list(command = "edit", 
-       subcmd = list(
-         list(name = 'user', help = 'edit user'),
-         list(name = 'account', help = 'edit account')), 
-       help = "edit command"),
-  list(command = "yoink", help = "yoink command")
-)
-
-cmdline <- "delete account --verbose --print -o /path/to/my/file -u JeffreyPerkel -k key1 --keyword=key2 -i infile.txt -k key3 -v"
+# myargs <- list(
+#   list(lparam = "--print", variable = "print", default = FALSE, type = "bool", help = 'print output'),
+#   list(lparam = "--outfile", sparam = "-o", variable = "outfile", default = NULL, type = "value", help = 'specify output file'),
+#   list(lparam = "--username", sparam = "-u", variable = "username", default = NULL, type = "value", help = 'user name'),
+#   list(lparam = "--keyword", sparam = "-k", variable = "keys", default = NULL, type = "multi", help = 'keywords for search'),
+#   list(lparam = "--infile", sparam = "-i", variable = "infile", default = NULL, type = "value", help = 'input file'),
+#   list(lparam = "--verbose", sparam = "-v", variable = "verbose", default = 0, type = "count", help = 'verbose?'),
+#   list(lparam = "--date", sparam = "-d", variable = "date", default = NULL, type = "range", help = 'date range')
+# )
+# 
+# mycmds <- list(
+#   list(command = "add", 
+#        subcmd = list(
+#          list(name = 'user', help = 'add user'),
+#          list(name = 'account', help = 'add account')), 
+#          help = "add command"),
+#   list(command = "delete", 
+#        subcmd = list(
+#          list(name = 'user', help = 'delete user'),
+#          list(name = 'account', help = 'delete account'),
+#          list(name = 'all', help = 'delete all')),
+#        help = "delete command"),
+#   list(command = "edit", 
+#        subcmd = list(
+#          list(name = 'user', help = 'edit user'),
+#          list(name = 'account', help = 'edit account')), 
+#        help = "edit command"),
+#   list(command = "yoink", help = "yoink command")
+# )
+# 
+# cmdline <- "delete account --verbose --print -o /path/to/my/file -u JeffreyPerkel -k key1 --keyword=key2 -i infile.txt -k key3 -v"
 # cmdline <- "delete account --verbose"
 
 get_element <- function(mylist, varname) {
@@ -290,9 +290,9 @@ parse_date <- function(d) {
 } # parse_date
 
 
-p <- Parser$new('myprog', 'myprog desc', '0.0.1', help = T)
-p$add_arguments(myargs)$
-  add_commands(mycmds)
-
-p$parse_command_line()
+# p <- Parser$new('myprog', 'myprog desc', '0.0.1', help = T)
+# p$add_arguments(myargs)$
+#   add_commands(mycmds)
+# 
+# p$parse_command_line()
 
