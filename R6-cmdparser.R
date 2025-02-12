@@ -106,7 +106,9 @@ Parser <- R6Class("Parser",
                      } # command processing
                      # add help command
                      # l_args = local copy of private$args
-                     l_args <- append(private$args, list(list(lparam = 'help', sparam = 'h', help = 'show help')))
+                     l_args <- private$args
+                     l_args[[length(l_args) + 1]] <- list(lparam = 'help', sparam = 'h', help = 'show help')
+                     l_args[[length(l_args) + 1]] <- list(lparam = 'version', sparam = 'V', help = 'show version info')
                      args <- sort(get_element(l_args, 'lparam'))
                      cat("\n\tARGUMENTS:\n")
                      for (arg in args) {
