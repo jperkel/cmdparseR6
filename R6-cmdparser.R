@@ -6,13 +6,13 @@ suppressPackageStartupMessages( {
 
 # allowed 'type' = (bool, value, multi, count, range)
 myargs <- list(
-  list(lparam = "print", sparam = "p", variable = "print", default = FALSE, type = "bool", help = 'print output'),
-  list(lparam = "outfile", sparam = "o", variable = "outfile", default = NULL, type = "value", help = 'specify output file'),
-  list(lparam = "username", sparam = "u", variable = "username", default = NULL, type = "value", help = 'user name'),
-  list(lparam = "keyword", sparam = "k", variable = "keys", default = NULL, type = "multi", help = 'keywords for search'),
-  list(lparam = "infile", sparam = "i", variable = "infile", default = NULL, type = "value", help = 'input file'),
-  list(lparam = "verbose", sparam = "v", variable = "verbose", default = 0, type = "count", help = 'verbose?'),
-  list(lparam = "date", sparam = "d", variable = "date", default = NULL, type = "range", help = 'date range')
+  list(lparam = "--print", variable = "print", default = FALSE, type = "bool", help = 'print output'),
+  list(lparam = "--outfile", sparam = "-o", variable = "outfile", default = NULL, type = "value", help = 'specify output file'),
+  list(lparam = "--username", sparam = "-u", variable = "username", default = NULL, type = "value", help = 'user name'),
+  list(lparam = "--keyword", sparam = "-k", variable = "keys", default = NULL, type = "multi", help = 'keywords for search'),
+  list(lparam = "--infile", sparam = "-i", variable = "infile", default = NULL, type = "value", help = 'input file'),
+  list(lparam = "--verbose", sparam = "-v", variable = "verbose", default = 0, type = "count", help = 'verbose?'),
+  list(lparam = "--date", sparam = "-d", variable = "date", default = NULL, type = "range", help = 'date range')
 )
 
 mycmds <- list(
@@ -107,13 +107,19 @@ Parser <- R6Class("Parser",
                      # add help command
                      # l_args = local copy of private$args
                      l_args <- private$args
-                     l_args[[length(l_args) + 1]] <- list(lparam = 'help', sparam = 'h', help = 'show help')
-                     l_args[[length(l_args) + 1]] <- list(lparam = 'version', sparam = 'V', help = 'show version info')
+                     if (self$help) {
+                       l_args[[length(l_args) + 1]] <- list(lparam = '--help', sparam = '-h', help = 'show help')
+                       l_args[[length(l_args) + 1]] <- list(lparam = '--version', sparam = '-V', help = 'show version info')
+                     }
                      args <- sort(get_element(l_args, 'lparam'))
                      cat("\n\tARGUMENTS:\n")
                      for (arg in args) {
                        myarg <- l_args[which(get_element(l_args, 'lparam') == arg)][[1]]
-                       cat('\t\t', paste0('--', myarg$lparam), paste0('(-', myarg$sparam, ') --'), myarg$help, '\n')
+                       cat('\t\t', myarg$lparam, 
+                           ifelse (!is.null(myarg$sparam), paste0('(', myarg$sparam, ')'), ""),
+                           '--',
+                           myarg$help, 
+                           '\n')
                      }
                    },
                    parse_command_line = function(cmdline = NULL) {
@@ -163,26 +169,26 @@ Parser <- R6Class("Parser",
 
                      while (i <= length(spl)) {
                        if (is_lparam(spl[i])) {
-                         lparam <- stringr::str_remove(spl[i], '^--')
-                         if (!lparam %in% get_element(private$args, 'lparam')) {
+                         # lparam <- stringr::str_remove(spl[i], '^--')
+                         if (!spl[i] %in% get_element(private$args, 'lparam')) {
                            warning(paste("Unknown parameter:", spl[i]), call. = FALSE)
                            mydata[["unknowns"]] <- c(mydata[["unknowns"]], spl[i])
                            # move past this param
                            i <- i + 1
                            next
                          }
-                         record <- private$args[[which(get_element(private$args, 'lparam') == lparam)]]
+                         record <- private$args[[which(get_element(private$args, 'lparam') == spl[i])]]
                        }
                        else if (is_sparam(spl[i])) {
-                         sparam <- stringr::str_remove(spl[i], '^-')
-                         if (!sparam %in% get_element(private$args, 'sparam')) {
+                         # sparam <- stringr::str_remove(spl[i], '^-')
+                         if (!spl[i] %in% get_element(private$args, 'sparam')) {
                            warning(paste("Unknown parameter:", spl[i]), call. = FALSE)
                            mydata[["unknowns"]] <- c(mydata[["unknowns"]], spl[i])
                            # move past this param
                            i <- i + 1
                            next
                          }
-                         record <- private$args[[which(get_element(private$args, 'sparam') == sparam)]]
+                         record <- private$args[[which(get_element(private$args, 'sparam') == spl[i])]]
                        }
                        else {
                          unk <- unk + 1
@@ -284,7 +290,7 @@ parse_date <- function(d) {
 } # parse_date
 
 
-p <- Parser$new('myprog', 'myprog desc', '0.0.1')
+p <- Parser$new('myprog', 'myprog desc', '0.0.1', help = T)
 p$add_arguments(myargs)$
   add_commands(mycmds)
 
