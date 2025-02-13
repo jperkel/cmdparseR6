@@ -169,8 +169,8 @@ Parser <- R6Class("Parser",
 
                      while (i <= length(spl)) {
                        l_args <- NULL 
+                       v <- vector()
                        if (is_lparam(spl[i])) {
-                         # lparam <- stringr::str_remove(spl[i], '^--')
                          if (!spl[i] %in% get_element(private$args, 'lparam')) {
                            warning(paste("Unknown parameter:", spl[i]), call. = FALSE)
                            mydata[["unknowns"]] <- c(mydata[["unknowns"]], spl[i])
@@ -178,14 +178,12 @@ Parser <- R6Class("Parser",
                            i <- i + 1
                            next
                          }
-                         v <- vector()
                          for (j in seq_along(private$args)) { v[j] <- !is.null(private$args[[j]]$lparam) }
                          # local copy
                          l_args <- private$args[v]
                          record <- l_args[[which(get_element(l_args, 'lparam') == spl[i])]]
                        }
                        else if (is_sparam(spl[i])) {
-                         # sparam <- stringr::str_remove(spl[i], '^-')
                          if (!spl[i] %in% get_element(private$args, 'sparam')) {
                            warning(paste("Unknown parameter:", spl[i]), call. = FALSE)
                            mydata[["unknowns"]] <- c(mydata[["unknowns"]], spl[i])
@@ -193,7 +191,6 @@ Parser <- R6Class("Parser",
                            i <- i + 1
                            next
                          }
-                         v <- vector(length = length(private$args))
                          for (j in seq_along(private$args)) { v[j] <- !is.null(private$args[[j]]$sparam) }
                          # local copy
                          l_args <- private$args[v]
@@ -227,9 +224,9 @@ Parser <- R6Class("Parser",
                                 mydata[[record$variable]] <- mydata[[record$variable]] + 1
                               },
                               "range" = {
-                                s <- strsplit(spl[i+1], ':')[[1]]
-                                mydata[[paste0(record$variable, 1)]] <- s[1]
-                                mydata[[paste0(record$variable, 2)]] <- s[2]
+                                mydata[[record$variable]] <- strsplit(spl[i+1], ':')[[1]]
+                                # mydata[[paste0(record$variable, 1)]] <- s[1]
+                                # mydata[[paste0(record$variable, 2)]] <- s[2]
                                 i <- i + 1
                               },
                               stop(paste("Unknown variable type:", record$type), call. = FALSE)
