@@ -168,6 +168,7 @@ Parser <- R6Class("Parser",
                      } # end command processing
 
                      while (i <= length(spl)) {
+                       l_args <- NULL 
                        if (is_lparam(spl[i])) {
                          # lparam <- stringr::str_remove(spl[i], '^--')
                          if (!spl[i] %in% get_element(private$args, 'lparam')) {
@@ -177,7 +178,11 @@ Parser <- R6Class("Parser",
                            i <- i + 1
                            next
                          }
-                         record <- private$args[[which(get_element(private$args, 'lparam') == spl[i])]]
+                         v <- vector()
+                         for (j in seq_along(private$args)) { v[j] <- !is.null(private$args[[j]]$lparam) }
+                         # local copy
+                         l_args <- private$args[v]
+                         record <- l_args[[which(get_element(l_args, 'lparam') == spl[i])]]
                        }
                        else if (is_sparam(spl[i])) {
                          # sparam <- stringr::str_remove(spl[i], '^-')
@@ -188,7 +193,11 @@ Parser <- R6Class("Parser",
                            i <- i + 1
                            next
                          }
-                         record <- private$args[[which(get_element(private$args, 'sparam') == spl[i])]]
+                         v <- vector(length = length(private$args))
+                         for (j in seq_along(private$args)) { v[j] <- !is.null(private$args[[j]]$sparam) }
+                         # local copy
+                         l_args <- private$args[v]
+                         record <- l_args[[which(get_element(l_args, 'sparam') == spl[i])]]
                        }
                        else {
                          unk <- unk + 1
@@ -198,6 +207,8 @@ Parser <- R6Class("Parser",
                          i <- i + 1
                          next
                        }
+                       
+                       # print(record)
                        
                        switch(record$type,
                               "bool" = {
