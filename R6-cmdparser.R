@@ -94,13 +94,13 @@ Parser <- R6Class("Parser",
                      for (cmd in commands) {
                        mycmd <- private$cmds[which(get_element(private$cmds, 'command') == cmd)][[1]]
                        subcmds <- sort(get_element(mycmd$subcmd, 'name'))
-                       cat ('\t\t', mycmd$command, '--', mycmd$help, '\n')
+                       cat ('\t\t', mycmd$command, ':', mycmd$help, '\n')
                        if (!is.null(subcmds)) {
                          cat("\t\t\tSUBCOMMANDS:\n")
                          for (subcmd in subcmds) {
                            mysubcmd <- mycmd$subcmd[which(get_element(mycmd$subcmd, 'name') == subcmd)][[1]]
                            # print (mysubcmd)
-                           cat ('\t\t\t', mysubcmd$name, '--', mysubcmd$help, '\n')
+                           cat ('\t\t\t', mysubcmd$name, ':', mysubcmd$help, '\n')
                          }
                        }
                      } # command processing
@@ -112,14 +112,28 @@ Parser <- R6Class("Parser",
                        l_args[[length(l_args) + 1]] <- list(lparam = '--version', sparam = '-V', help = 'show version info')
                      }
                      args <- sort(get_element(l_args, 'lparam'))
+                     # get longest element
+                     padding <- max(nchar(args)) + 7
                      cat("\n\tARGUMENTS:\n")
                      for (arg in args) {
                        myarg <- l_args[which(get_element(l_args, 'lparam') == arg)][[1]]
-                       cat('\t\t', myarg$lparam, 
-                           ifelse (!is.null(myarg$sparam), paste0('(', myarg$sparam, ')'), ""),
-                           '--',
-                           myarg$help, 
-                           '\n')
+                       arg_string <- paste(
+                        myarg$lparam,
+                        ifelse (!is.null(myarg$sparam), paste0('(', myarg$sparam, ')'), "")
+                       )
+                       cat('\t\t', # myarg$lparam, 
+                       stringr::str_pad(arg_string, width = padding, side = 'right'),
+                       ': ',
+                       myarg$help,
+                       '\n', 
+                      sep = '')
+                       
+                          #  ifelse (!is.null(myarg$sparam), paste0('(', myarg$sparam, ')'), ""),
+                          #  stringr::str_pad(' ', width = padding, side = 'right'),
+                          #  '--',
+                          #  # stringr::str_pad(myarg$help, width = padding, side = "right"),
+                          #  myarg$help, 
+                          #  '\n')
                      }
                    },
                    parse_command_line = function(cmdline = NULL) {
