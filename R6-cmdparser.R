@@ -90,18 +90,25 @@ Parser <- R6Class("Parser",
                        )
                      # get command names and alphabetize
                      commands <- sort(get_element(private$cmds, 'command'))
+                     cmd_padding <- max(nchar(commands))
+
                      cat("\tCOMMANDS:\n")
                      for (cmd in commands) {
                        mycmd <- private$cmds[which(get_element(private$cmds, 'command') == cmd)][[1]]
+                       cmd_string <- paste(stringr::str_pad(mycmd$command, width = cmd_padding, side = 'left'), ':', mycmd$help)
+                       cat('\t\t', cmd_string, '\n')
                        subcmds <- sort(get_element(mycmd$subcmd, 'name'))
-                       cat ('\t\t', mycmd$command, ':', mycmd$help, '\n')
+                       # cat ('\t\t', mycmd$command, ':', mycmd$help, '\n')
                        if (!is.null(subcmds)) {
+                         sub_padding <- max(nchar(subcmds))
                          cat("\t\t\tSUBCOMMANDS:\n")
                          for (subcmd in subcmds) {
                            mysubcmd <- mycmd$subcmd[which(get_element(mycmd$subcmd, 'name') == subcmd)][[1]]
+                           sub_string <- paste(stringr::str_pad(mysubcmd$name, width = sub_padding, side = 'left'), ':', mysubcmd$help)
                            # print (mysubcmd)
-                           cat ('\t\t\t', mysubcmd$name, ':', mysubcmd$help, '\n')
+                           cat ('\t\t\t', sub_string, '\n')
                          }
+                         cat('\n')
                        }
                      } # command processing
                      # add help command
@@ -113,7 +120,7 @@ Parser <- R6Class("Parser",
                      }
                      args <- sort(get_element(l_args, 'lparam'))
                      # get longest element
-                     padding <- max(nchar(args)) + 7
+                     arg_padding <- max(nchar(args)) + 7
                      cat("\n\tARGUMENTS:\n")
                      for (arg in args) {
                        myarg <- l_args[which(get_element(l_args, 'lparam') == arg)][[1]]
@@ -122,16 +129,16 @@ Parser <- R6Class("Parser",
                         ifelse (!is.null(myarg$sparam), paste0('(', myarg$sparam, ')'), "")
                        )
                        cat('\t\t', # myarg$lparam, 
-                       stringr::str_pad(arg_string, width = padding, side = 'right'),
+                       stringr::str_pad(arg_string, width = arg_padding, side = 'right'),
                        ': ',
                        myarg$help,
                        '\n', 
                       sep = '')
                        
                           #  ifelse (!is.null(myarg$sparam), paste0('(', myarg$sparam, ')'), ""),
-                          #  stringr::str_pad(' ', width = padding, side = 'right'),
+                          #  stringr::str_pad(' ', width = cmd_padding, side = 'right'),
                           #  '--',
-                          #  # stringr::str_pad(myarg$help, width = padding, side = "right"),
+                          #  # stringr::str_pad(myarg$help, width = cmd_padding, side = "right"),
                           #  myarg$help, 
                           #  '\n')
                      }
