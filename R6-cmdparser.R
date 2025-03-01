@@ -4,40 +4,6 @@ suppressPackageStartupMessages( {
 })
 
 
-# allowed 'type' = (bool, value, multi, count, range)
-# myargs <- list(
-#   list(lparam = "--print", variable = "print", default = FALSE, type = "bool", help = 'print output'),
-#   list(lparam = "--outfile", sparam = "-o", variable = "outfile", default = NULL, type = "value", help = 'specify output file'),
-#   list(lparam = "--username", sparam = "-u", variable = "username", default = NULL, type = "value", help = 'user name'),
-#   list(lparam = "--keyword", sparam = "-k", variable = "keys", default = NULL, type = "multi", help = 'keywords for search'),
-#   list(lparam = "--infile", sparam = "-i", variable = "infile", default = NULL, type = "value", help = 'input file'),
-#   list(lparam = "--verbose", sparam = "-v", variable = "verbose", default = 0, type = "count", help = 'verbose?'),
-#   list(lparam = "--date", sparam = "-d", variable = "date", default = NULL, type = "range", help = 'date range')
-# )
-# 
-# mycmds <- list(
-#   list(command = "add", 
-#        subcmd = list(
-#          list(name = 'user', help = 'add user'),
-#          list(name = 'account', help = 'add account')), 
-#          help = "add command"),
-#   list(command = "delete", 
-#        subcmd = list(
-#          list(name = 'user', help = 'delete user'),
-#          list(name = 'account', help = 'delete account'),
-#          list(name = 'all', help = 'delete all')),
-#        help = "delete command"),
-#   list(command = "edit", 
-#        subcmd = list(
-#          list(name = 'user', help = 'edit user'),
-#          list(name = 'account', help = 'edit account')), 
-#        help = "edit command"),
-#   list(command = "yoink", help = "yoink command")
-# )
-# 
-# cmdline <- "delete account --verbose --print -o /path/to/my/file -u JeffreyPerkel -k key1 --keyword=key2 -i infile.txt -k key3 -v"
-# cmdline <- "delete account --verbose"
-
 get_element <- function(mylist, varname) {
   unlist(lapply(mylist, '[[', varname))
 }
@@ -86,7 +52,8 @@ public = list(
     lines <- vector() # container for the lines
     tablen <- 4 # tab length
     mytab <- paste(rep(' ', tablen), collapse = '')
-    
+    MAXLINELEN <- 80 
+
     # basic usage
     lines[1] <- paste(
       basename(here::here()),
@@ -146,6 +113,27 @@ public = list(
         myarg$help)
     }
     # write to screen
+    if (any(nchar(lines) > MAXLINELEN)) {
+      long_lines <- which(nchar(lines) > MAXLINELEN) 
+      # long_lines is a vector of integers...
+      for (i in long_lines) {
+        myline <- lines[i]
+        help_start_pos <- stringr::str_locate(myline, ': ') 
+        max_help_text_line <- MAXLINELEN - help_start_pos[1,2]
+        mypadding <- paste(rep(' ', help_start_pos[1,2]), collapse = '')        
+        lstr <- stringr::str_sub(myline, start = 1, end = MAXLINELEN)
+        rstr <- stringr::str_sub(myline, start = MAXLINELEN+1)
+        center <- NULL
+        while (nchar(rstr) > max_help_text_line) {
+          tmp <- stringr::str_sub(rstr, start = 1, end = max_help_text_line)          
+          center <- c(center, stringr::str_trim(tmp))
+          rstr <- stringr::str_sub(rstr, start = max_help_text_line + 1)
+        }
+        center <- stringr::str_c(mypadding, center, collapse = '\n')
+        if(rstr != '') rstr <- stringr::str_c(mypadding, rstr)
+        lines[i] <- stringr::str_c(lstr, '\n', center, '\n', rstr)
+      }
+    }
     writeLines(lines)
   },
 
