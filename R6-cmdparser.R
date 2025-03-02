@@ -55,14 +55,14 @@ public = list(
     MAXLINELEN <- 80 
 
     # basic usage
-    lines[1] <- paste(
+    lines[(length(lines) + 1)] <- paste(
       basename(here::here()),
       if (!is.null(get_element(private$cmds, 'command'))) "[COMMAND]",
       if (!is.null(get_element(private$cmds, 'subcmd'))) "[SUBCOMMAND]",
       if (!is.null(get_element(private$args, 'lparam'))) "<OPTIONAL ARGUMENTS>")
-      lines[2] <- paste0(mytab, 'Desc: ', self$desc)
-      lines[3] <- paste0(mytab, 'Ver : ', self$ver)
-      lines[4] <- ''
+      lines[(length(lines) + 1)] <- paste0(mytab, 'Desc: ', self$desc)
+      lines[(length(lines) + 1)] <- paste0(mytab, 'Ver : ', self$ver, '\n')
+      # lines[4] <- ''
 
     # get command names and alphabetize
     commands <- sort(get_element(private$cmds, 'command'))
@@ -118,20 +118,25 @@ public = list(
       # long_lines is a vector of integers...
       for (i in long_lines) {
         myline <- lines[i]
+
         help_start_pos <- stringr::str_locate(myline, ': ') 
+        # help_start_pos[1,2] is the position of the space in ': '
         max_help_text_line <- MAXLINELEN - help_start_pos[1,2]
+        # left-side padding for indented help text
         mypadding <- paste(rep(' ', help_start_pos[1,2]), collapse = '')        
-        lstr <- stringr::str_sub(myline, start = 1, end = MAXLINELEN)
+
+        lstr <- stringr::str_c(stringr::str_sub(myline, start = 1, end = MAXLINELEN), '\n')
         rstr <- stringr::str_sub(myline, start = MAXLINELEN+1)
         center <- NULL
+
         while (nchar(rstr) > max_help_text_line) {
           tmp <- stringr::str_sub(rstr, start = 1, end = max_help_text_line)          
           center <- c(center, stringr::str_trim(tmp))
           rstr <- stringr::str_sub(rstr, start = max_help_text_line + 1)
         }
-        center <- stringr::str_c(mypadding, center, collapse = '\n')
+        if (!is.null(center)) center <- stringr::str_c(mypadding, center, collapse = '\n')
         if(rstr != '') rstr <- stringr::str_c(mypadding, rstr)
-        lines[i] <- stringr::str_c(lstr, '\n', center, '\n', rstr)
+        lines[i] <- stringr::str_c(lstr, ifelse(is.null(center), '', center), rstr)
       }
     }
     writeLines(lines)
