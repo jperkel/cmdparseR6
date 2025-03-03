@@ -110,9 +110,12 @@ public = list(
         mytab, mytab,
         stringr::str_pad(arg_string, width = arg_padding, side = 'right'),
         ':',
-        myarg$help)
+        myarg$help,
+        ifelse (!is.null(myarg$default), paste0('(default: ', as.character(myarg$default), ')'), "")
+      )
     }
     # write to screen
+    # lines <- sub(pattern = '(\\(default:)', replacement = '\n\\1', x = lines)
     if (any(nchar(lines) > MAXLINELEN)) {
       long_lines <- which(nchar(lines) > MAXLINELEN) 
       # long_lines is a vector of integers...
