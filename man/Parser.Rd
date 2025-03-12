@@ -6,19 +6,6 @@
 \description{
 Parser class description
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{name}}{name of the application you are creating}
-
-\item{\code{desc}}{A short description of what the software does}
-
-\item{\code{ver}}{Software version}
-
-\item{\code{help}}{Add -V and -h flags (default = TRUE)}
-}
-\if{html}{\out{</div>}}
-}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -35,7 +22,7 @@ Parser class description
 \if{html}{\out{<a id="method-Parser-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Parser-new}{}}}
 \subsection{Method \code{new()}}{
-Initialization function (use "Parser$new")
+Initialization function
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$new(name, desc, ver, help = TRUE)}\if{html}{\out{</div>}}
 }
@@ -45,11 +32,11 @@ Initialization function (use "Parser$new")
 \describe{
 \item{\code{name}}{Program name}
 
-\item{\code{desc}}{Program description string}
+\item{\code{desc}}{Program description}
 
 \item{\code{ver}}{Software version}
 
-\item{\code{help}}{Auto-add -h (help) and -V (version) flags (default = TRUE)}
+\item{\code{help}}{Add -h (help) and -V (version) flags (default = TRUE)}
 }
 \if{html}{\out{</div>}}
 }
@@ -96,7 +83,7 @@ Parse the command line
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{cmdline}}{Command line args}
+\item{\code{cmdline}}{Command line args string (default = NULL; uses the result of commandArgs())}
 }
 \if{html}{\out{</div>}}
 }

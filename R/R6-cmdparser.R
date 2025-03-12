@@ -1,7 +1,3 @@
-suppressPackageStartupMessages( {
-  library(tidyverse)
-  # library(R6)
-})
 
 
 get_element <- function(mylist, varname) {
@@ -19,10 +15,7 @@ is_sparam <- function(string) {
 
 #' The Parser class
 #' @description Parser class description
-#' @field name name of the application you are creating
-#' @field desc A short description of what the software does
-#' @field ver Software version
-#' @field help Add -V and -h flags (default = TRUE)
+#'
 #' @export
 Parser <- R6::R6Class("Parser",
 public = list(
@@ -32,11 +25,11 @@ public = list(
   help = NULL,
 
   #' @description
-    #' Initialization function (use "Parser$new")
+    #' Initialization function
     #' @param name Program name
-    #' @param desc Program description string
+    #' @param desc Program description
     #' @param ver Software version
-    #' @param help Auto-add -h (help) and -V (version) flags (default = TRUE)
+    #' @param help Add -h (help) and -V (version) flags (default = TRUE)
   initialize = function(name, desc, ver, help = TRUE) {
     self$name = name
     self$desc = desc
@@ -170,7 +163,7 @@ public = list(
 
       #' @description
             #' Parse the command line
-            #' @param cmdline Command line args
+            #' @param cmdline Command line args string (default = NULL; uses the result of commandArgs())
             #'
       parse_command_line = function(cmdline = NULL) {
         # if a cmdline is passed as a function arg,
