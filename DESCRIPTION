@@ -1,0 +1,11 @@
+Package: cmdparseR6
+Title: A command-line parsing tool based on R6 OOP
+Version: 0.0.0.9000
+Authors@R: 
+    person("Jeffrey", "Perkel", , "j_perkel@yahoo.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-5699-1008"))
+Description: A command-line parsing tool based on R6 OOP
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2

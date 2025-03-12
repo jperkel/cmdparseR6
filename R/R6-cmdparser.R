@@ -1,6 +1,6 @@
 suppressPackageStartupMessages( {
   library(tidyverse)
-  library(R6)
+  # library(R6)
 })
 
 
@@ -17,12 +17,13 @@ is_sparam <- function(string) {
 }
 
 
+#' @export
 Parser <- R6::R6Class("Parser",
 public = list(
   name = NULL,
   desc = NULL,
-  ver = NULL, 
-  help = NULL, 
+  ver = NULL,
+  help = NULL,
 
   initialize = function(name, desc, ver, help = TRUE) {
     self$name = name
@@ -52,7 +53,7 @@ public = list(
     lines <- vector() # container for the lines
     tablen <- 4 # tab length
     mytab <- paste(rep(' ', tablen), collapse = '')
-    MAXLINELEN <- 80 
+    MAXLINELEN <- 100
 
     # basic usage
     lines[(length(lines) + 1)] <- paste(
@@ -116,29 +117,30 @@ public = list(
     }
     # write to screen
     # lines <- sub(pattern = '(\\(default:)', replacement = '\n\\1', x = lines)
-    if (any(nchar(lines) > MAXLINELEN)) {
-      long_lines <- which(nchar(lines) > MAXLINELEN) 
+    if (any(nchar(lines) > (MAXLINELEN + 1))) {
+      long_lines <- which(nchar(lines) > (MAXLINELEN + 1))
       # long_lines is a vector of integers...
       for (i in long_lines) {
         myline <- lines[i]
 
-        help_start_pos <- stringr::str_locate(myline, ': ') 
+        help_start_pos <- stringr::str_locate(myline, ': ')
         # help_start_pos[1,2] is the position of the space in ': '
         max_help_text_line <- MAXLINELEN - help_start_pos[1,2]
         # left-side padding for indented help text
-        mypadding <- paste(rep(' ', help_start_pos[1,2]), collapse = '')        
+        mypadding <- paste(rep(' ', help_start_pos[1,2]), collapse = '')
 
         lstr <- stringr::str_c(stringr::str_sub(myline, start = 1, end = MAXLINELEN), '\n')
-        rstr <- stringr::str_sub(myline, start = MAXLINELEN+1)
+        rstr <- stringr::str_sub(myline, start = MAXLINELEN + 1)
         center <- NULL
 
         while (nchar(rstr) > max_help_text_line) {
-          tmp <- stringr::str_sub(rstr, start = 1, end = max_help_text_line)          
+          tmp <- stringr::str_sub(rstr, start = 1, end = max_help_text_line)
           center <- c(center, stringr::str_trim(tmp))
           rstr <- stringr::str_sub(rstr, start = max_help_text_line + 1)
         }
         if (!is.null(center)) center <- stringr::str_c(mypadding, center, collapse = '\n')
-        if(rstr != '') rstr <- stringr::str_c(mypadding, rstr)
+        # if(rstr != '') rstr <- stringr::str_c(mypadding, rstr)
+        rstr <- stringr::str_c(mypadding, stringr::str_trim(rstr))
         lines[i] <- stringr::str_c(lstr, ifelse(is.null(center), '', center), rstr)
       }
     }
@@ -146,7 +148,7 @@ public = list(
   },
 
       parse_command_line = function(cmdline = NULL) {
-        # if a cmdline is passed as a function arg, 
+        # if a cmdline is passed as a function arg,
         # override the result from commandArgs()
         if (is.null(cmdline)) cmdline <- private$cmdline
         # if there is no cmdline, return NULL
@@ -154,7 +156,7 @@ public = list(
         # split the cmdline into a vector of strings such that each param is its own element.
         # if param takes the form -p=value or --p=value, split that too.
         spl <- strsplit(cmdline, ' |=')[[1]]
-        
+
         # list to store cmdline variables
         mydata <- vector('list', length(private$args))
         # name each element in the list according to the variable name in args
@@ -164,10 +166,10 @@ public = list(
           record <- private$args[[which(get_element(private$args, 'variable') == name)]]
           mydata[[name]] <- record$default
         }
-        
+
         i <- 1 # args index
         unk <- 0 # count of unknown args
-        
+
         # process command, if any
         # if command is possible, one must be provided
         if (length(private$cmds) > 0) {
@@ -189,9 +191,9 @@ public = list(
             i <- i + 1
           }
         } # end command processing
-        
+
         while (i <= length(spl)) {
-          l_args <- NULL 
+          l_args <- NULL
           v <- vector()
           if (is_lparam(spl[i])) {
             if (!spl[i] %in% get_element(private$args, 'lparam')) {
@@ -227,9 +229,9 @@ public = list(
             i <- i + 1
             next
           }
-          
+
           # print(record)
-          
+
           switch(record$type,
             "bool" = {
               mydata[[record$variable]] <- !record$default
@@ -274,14 +276,14 @@ public = list(
       cmds = list()
     )
   )
-  
-  
+
+
   parse_date <- function(d) {
     year <- NA
     month <- NA
     day <- NA
-    error <- FALSE 
-    
+    error <- FALSE
+
     if (grepl('^[0-9]{4}-[0-9]{2}-[0-9]{2}$', d) == TRUE) {
       myDate <- try(as.Date (d, format = "%Y-%m-%d"))
       if (class (myDate) == "try-error" || is.na(myDate)) {
@@ -321,12 +323,11 @@ public = list(
     if (error) stop (paste("parse_date(): Bad date format:", d), call. = FALSE)
     return(c(year, month, day))
   } # parse_date
-  
-  
+
+
   # p <- Parser$new('myprog', 'myprog desc', '0.0.1', help = T)
   # p$add_arguments(myargs)$
   #   add_commands(mycmds)
-  # 
+  #
   # p$parse_command_line()
-  
-  
+
