@@ -17,6 +17,12 @@ is_sparam <- function(string) {
 }
 
 
+#' The Parser class
+#' @description Parser class description
+#' @field name name of the application you are creating
+#' @field desc A short description of what the software does
+#' @field ver Software version
+#' @field help Add -V and -h flags (default = TRUE)
 #' @export
 Parser <- R6::R6Class("Parser",
 public = list(
@@ -25,6 +31,12 @@ public = list(
   ver = NULL,
   help = NULL,
 
+  #' @description
+    #' Initialization function (use "Parser$new")
+    #' @param name Program name
+    #' @param desc Program description string
+    #' @param ver Software version
+    #' @param help Auto-add -h (help) and -V (version) flags (default = TRUE)
   initialize = function(name, desc, ver, help = TRUE) {
     self$name = name
     self$desc = desc
@@ -33,6 +45,9 @@ public = list(
     private$cmdline = paste(commandArgs(trailingOnly = T), collapse = ' ')
   },
 
+  #' @description
+    #' Add arguments as a list of lists with entries for lparam, sparam, variable, default, type and help)
+    #'
   add_arguments = function(...) {
     arglist <- list(...)
     for (arg in arglist) {
@@ -41,6 +56,9 @@ public = list(
     invisible(self)
   },
 
+  #' @description
+    #' Add commands as a list of lists with entries for command name, help and (optionally) subcmd
+    #'
   add_commands = function(...) {
     cmdlist <- list(...)
     for (cmd in cmdlist) {
@@ -49,6 +67,9 @@ public = list(
     invisible(self)
   },
 
+  #' @description
+    #' Autogenerate a help screen
+    #'
   usage = function() {
     lines <- vector() # container for the lines
     tablen <- 4 # tab length
@@ -147,6 +168,10 @@ public = list(
     writeLines(lines)
   },
 
+      #' @description
+            #' Parse the command line
+            #' @param cmdline Command line args
+            #'
       parse_command_line = function(cmdline = NULL) {
         # if a cmdline is passed as a function arg,
         # override the result from commandArgs()
@@ -261,6 +286,9 @@ public = list(
         mydata
       },
 
+      #' @description
+            #' Print function
+            #'
       print = function() {
         base::print(paste0("<Parser> for program \'", self$name, "\'"))
         base::print(paste0("   desc: ", self$desc))
@@ -278,6 +306,9 @@ public = list(
   )
 
 
+#' parse_date function
+#' @param d a date string: "YYYY-MM-DD", "YYYY-MM", or "YYYY"
+#' @export
   parse_date <- function(d) {
     year <- NA
     month <- NA

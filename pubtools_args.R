@@ -49,3 +49,4 @@ myargs <- list(
 p <- Parser$new('pubtools', 'cmdline publication tools', '1.0', help = T)
 p$add_arguments(myargs)$add_commands(mycmds)
 p$parse_command_line('author report -a Perkel')
+p$usage()
