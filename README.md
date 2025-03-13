@@ -1,6 +1,6 @@
 # cmdparseR6: A command-line argument parser based on R6 object-oriented programming
 
-cmdparseR6 parses R-script command lines of the form `PROGRAM_NAME COMMAND SUBCOMMAND argument ...` -- equivalent to the way the Docker and Git command line interfaces work. For instance, `Rscript mycheckbook.R add deposit --amount 200` specifies the command `add` and subcommand `deposit`, with the arguments `--amount 200`. 
+Based on the [R6 package](https://r6.r-lib.org/articles/Introduction.html), cmdparseR6 parses R-script command lines of the form `PROGRAM_NAME COMMAND SUBCOMMAND argument ...` -- equivalent to the way the Docker and Git command line interfaces work. For instance, `Rscript mycheckbook.R add deposit --amount 200` specifies the command `add` and subcommand `deposit`, with the arguments `--amount 200`. It is a refactored form of my earlier [`cmdparseR`](https://github.com/jperkel/cmdparseR) package. 
 
 ## Installation
 Install from GitHub: 
@@ -9,7 +9,7 @@ devtools::install_github("jperkel/cmdparseR6")
 ```
 
 ## Usage
-The file `pubtools_args.R` contains a fully worked example. 
+The included file [`pubtools_args.R`](https://github.com/jperkel/cmdparseR6/blob/main/pubtools_args.R) contains a fully worked example: 
 
 Specify commands -- if desired (they are not required) -- as a list of lists that includes the command `name` and `help` string: 
 ```r
