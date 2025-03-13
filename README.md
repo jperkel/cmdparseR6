@@ -82,7 +82,51 @@ mydata <- p$parse_command_line()
 
 The return value of `parse_command_line()` is a list of values, named according the `variable` term in `myargs`. Thus, `mydata$author` in the example above would be `Perkel`. Commands and subcommands, if used, are returned in `mydata$command` and `mydata$subcmd` respectively. Unknown arguments are captured in `mydata$unknowns`. 
 
-`cmdparseR6` provides a built-in `usage()` function that builds a help screen from the provided arguments and help strings: 
-```r
+`cmdparseR6` provides a built-in `usage()` function that builds a formatted help screen from the provided arguments and help strings: 
+```
 p$usage()
+
+pubtools [COMMAND] [SUBCOMMAND] <OPTIONAL ARGUMENTS>
+    Desc: cmdline publication tools
+    Ver : 1.0
+
+    COMMANDS:
+        article : Article tools
+        SUBCOMMANDS:
+                  add : Add new article
+            diversity : Show source diversity statistics
+            published : View published content
+            scheduled : View upcoming content
+                  top : View top-performing content
+
+         author : Author tools
+        SUBCOMMANDS:
+                  add : Add new author
+            diversity : Show gender analysis of authorship
+                 list : List authors
+               report : Get author report
+              summary : Summarize all authors
+
+           todo : Show upcoming due dates
+
+    ARGUMENTS:
+          --author (-a)          : Specify author (default: NA)
+          --date (-d)            : YYYY-MM-DD | YYYY-MM | YYYY (default: NA)
+          --debug                : Run in debug mode (default: FALSE)
+          --graph                : Graph output (default: FALSE)
+          --help (-h)            : show help 
+          --id                   : Specify row Id for more details (default: NA)
+          --keyword (-k)         : Search keywords; multiple keys are OR'd unless search_and == TRUE 
+          --nolist               : Exclude article listing from author report (default: FALSE)
+          --outdir (-o)          : Store plots to outdir (default: OUTDIR)
+          --output-format (-f)   : Select output format (default: svg)
+          --printonly (-p)       : Show only print content (default: FALSE)
+          --range (-r)           : YYYY-MM-DD:YYYY-MM-DD (default: NA)
+          --sampledb             : Sample AuthorDB for validation (default: FALSE)
+          --search-and           : Perform Boolean AND keyword search (default: FALSE)
+          --sect (-s)            : Filter by section (default: NA)
+          --use-cache (-u)       : Force using cached files (default: FALSE)
+          --verbose (-v)         : Print verbose messages; each use increments the verbosity level (
+                                   default: 0)
+          --version (-V)         : show version info 
 ```
