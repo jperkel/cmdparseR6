@@ -60,6 +60,8 @@ myargs <- list(
   list(lparam = "--verbose", sparam = "-v", variable = "verbose", default = 0, "count", help = "Print verbose messages; each use increments the verbosity level")
 )
 ```
+The `type` argument can be any of: `bool` (logical), `value` (e.g. a number or string), `multi` (a value that can store more than one value, for instance a list of keywords), `count` (increments each time it is used. e.g., `-v -v -v` would return `3`), and `range` (two values separated by a colon, e.g., `--range 2024:2025` would result in `mydata$daterange` == `c(2024, 2025)`). 
+
 Initialize the command line parser with `Parser$new`, specifying the name of the tool, a short description and version number. The final `help` argument indicates if you want the parser to automatically add arguments for help (`-h`) and for version information (`-V`). `help = T` by default. 
 
 ```r
@@ -74,9 +76,11 @@ p$add_arguments(myargs)$add_commands(mycmds)
 Finally, call `parse_command_line()` to do its work. The Parser object captures the R command line when `$new()` is called. However, you can also provide a command line string as an argument: 
 
 ```r
-p$parse_command_line()
+mydata <- p$parse_command_line()
 # p$parse_command_line('author report -a Perkel')
 ```
+
+The return value of `parse_command_line()` is a list of values, named according the `variable` term in `myargs`. Thus, `mydata$author` in the example above would be `Perkel`. Commands and subcommands, if used, are returned in `mydata$command` and `mydata$subcmd` respectively. Unknown arguments are captured in `mydata$unknowns`. 
 
 `cmdparseR6` provides a built-in `usage()` function that builds a help screen from the provided arguments and help strings: 
 ```r
