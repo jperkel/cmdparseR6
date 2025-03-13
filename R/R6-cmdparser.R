@@ -71,7 +71,8 @@ public = list(
 
     # basic usage
     lines[(length(lines) + 1)] <- paste(
-      basename(here::here()),
+      self$name,
+      # basename(here::here()),
       if (!is.null(get_element(private$cmds, 'command'))) "[COMMAND]",
       if (!is.null(get_element(private$cmds, 'subcmd'))) "[SUBCOMMAND]",
       if (!is.null(get_element(private$args, 'lparam'))) "<OPTIONAL ARGUMENTS>")
