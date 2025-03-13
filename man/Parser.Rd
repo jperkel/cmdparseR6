@@ -12,6 +12,7 @@ Parser class description
 \item \href{#method-Parser-new}{\code{Parser$new()}}
 \item \href{#method-Parser-add_arguments}{\code{Parser$add_arguments()}}
 \item \href{#method-Parser-add_commands}{\code{Parser$add_commands()}}
+\item \href{#method-Parser-version}{\code{Parser$version()}}
 \item \href{#method-Parser-usage}{\code{Parser$usage()}}
 \item \href{#method-Parser-parse_command_line}{\code{Parser$parse_command_line()}}
 \item \href{#method-Parser-print}{\code{Parser$print()}}
@@ -58,6 +59,16 @@ Add arguments as a list of lists with entries for lparam, sparam, variable, defa
 Add commands as a list of lists with entries for command name, help and (optionally) subcmd
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$add_commands(...)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Parser-version"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-version}{}}}
+\subsection{Method \code{version()}}{
+Return the version string
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Parser$version()}\if{html}{\out{</div>}}
 }
 
 }
