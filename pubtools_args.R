@@ -48,7 +48,10 @@ myargs <- list(
 
 p <- Parser$new('pubtools', 'cmdline publication tools', '1.0', help = T)
 p$add_arguments(myargs)$add_commands(mycmds)
-mydata <- p$parse_command_line('author report -a Perkel')
+# parse the Rscript command line
+mydata <- p$parse_command_line()
+# alternatively, supply your own for testing: 
+# mydata <- p$parse_command_line('author report -a Perkel')
 
 mydata
 
