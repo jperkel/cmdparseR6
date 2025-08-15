@@ -204,7 +204,7 @@ Parser <- R6::R6Class("Parser",
                           }
 
                           i <- 1 # args index
-                          unk <- 0 # count of unknown args
+                          # unk <- 0 # count of unknown args
 
                           # process command, if any
                           # if command is possible, one must be provided
@@ -229,7 +229,7 @@ Parser <- R6::R6Class("Parser",
                           } # end command processing
 
                           while (i <= length(spl)) {
-                            l_args <- NULL
+                            l_args <- NULL # local copy of args
                             v <- vector()
                             if (is_lparam(spl[i])) {
                               if (!spl[i] %in% get_element(private$args, 'lparam')) {
@@ -239,6 +239,7 @@ Parser <- R6::R6Class("Parser",
                                 i <- i + 1
                                 next
                               }
+                              # get a vector of logicals indicating which private$args have lparam fields
                               for (j in seq_along(private$args)) { v[j] <- !is.null(private$args[[j]]$lparam) }
                               # local copy
                               l_args <- private$args[v]
@@ -258,9 +259,10 @@ Parser <- R6::R6Class("Parser",
                               record <- l_args[[which(get_element(l_args, 'sparam') == spl[i])]]
                             }
                             else {
-                              unk <- unk + 1
-                              mydata[["unknowns"]][unk] <- spl[i]
+                              # unk <- unk + 1
                               warning(paste("Unknown param:", spl[i]), call. = FALSE)
+                              # mydata[["unknowns"]][unk] <- spl[i]
+                              mydata[["unknowns"]] <- c(mydata[["unknowns"]], spl[i])
                               # move past this param
                               i <- i + 1
                               next
