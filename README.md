@@ -45,22 +45,17 @@ myargs <- list(
   list(lparam = "--author", sparam = "-a", variable = "author", default = NA, type = "value", help = 'Specify author'),
   list(lparam = "--date", sparam = "-d", variable = "date", default = NA, type = 'value', help = 'YYYY-MM-DD | YYYY-MM | YYYY'),
   list(lparam = "--debug", variable = "debug", default = FALSE, type = 'bool', help = "Run in debug mode"),
-  list(lparam = "--graph", variable = "graph", default = FALSE, type = 'bool', help = 'Graph output'),
   list(lparam = "--id", variable = "id", default = NA, type = 'value', help = 'Specify row Id for more details'),
   list(lparam = "--keyword", sparam = "-k", variable = "keyword", default = NULL, type = 'multi', help = "Search keywords; multiple keys are OR'd unless search_and == TRUE"),
-  list(lparam = "--nolist", variable = "nolist", default = FALSE, type = 'bool', help = "Exclude article listing from author report"),
   list(lparam = "--outdir", sparam = "-o", variable = "outdir", default = 'OUTDIR', type = 'value', help = 'Store plots to outdir'),
   list(lparam = "--output-format", sparam = "-f", variable = "outputformat", default = "svg", type = 'value', help = "Select output format"),
   list(lparam = "--printonly", sparam = "-p", variable = "printonly", default = FALSE, type = 'bool', help = 'Show only print content'),
   list(lparam = "--range", sparam = "-r", variable = "daterange", default = NA, type = 'range', help = 'YYYY-MM-DD:YYYY-MM-DD'),
-  list(lparam = "--sampledb", variable = "sampledb", default = FALSE, type = 'bool', help = 'Sample AuthorDB for validation'),
-  list(lparam = "--search-and", variable = "search_and", default = FALSE, type = 'bool', help = "Perform Boolean AND keyword search"),
   list(lparam = "--sect", sparam = "-s", variable = "sect", default = NA, type = 'multi', help = 'Filter by section'),
-  list(lparam = "--use-cache", sparam = "-u", variable = "cache", default = FALSE, type = "bool", help = "Force using cached files"),
   list(lparam = "--verbose", sparam = "-v", variable = "verbose", default = 0, "count", help = "Print verbose messages; each use increments the verbosity level")
 )
 ```
-The `type` argument can be any of: `bool` (logical), `value` (e.g. a number or string), `multi` (a value that can store more than one value, for instance a list of keywords), `count` (increments each time it is used. e.g., `-v -v -v` would return `3`), and `range` (two values separated by a colon, e.g., `--range 2024:2025` would result in `mydata$daterange` == `c(2024, 2025)`). 
+The `type` argument can be any of: `bool` (logical), `value` (e.g. a number or string), `multi` (a value that can store more than one value, for instance a list of keywords), `count` (increments each time it is used. e.g., `-v -v -v` would return `3`), and `range` (two values separated by a colon, e.g., `--range 2024:2025` would result in `mydata$daterange` == `c(2024, 2025)`). For types `value`, `multi` and `range`, the next argument is stored; for type `bool`, the default value is flipped (i.e., FALSE becomes TRUE).
 
 Initialize the command line parser with `Parser$new`, specifying the name of the tool, a short description and version number. The final `help` argument indicates if you want the parser to automatically add arguments for help (`-h`) and for version information (`-V`). `help = T` by default. 
 
@@ -113,19 +108,14 @@ pubtools [COMMAND] [SUBCOMMAND] <OPTIONAL ARGUMENTS>
           --author (-a)          : Specify author (default: NA)
           --date (-d)            : YYYY-MM-DD | YYYY-MM | YYYY (default: NA)
           --debug                : Run in debug mode (default: FALSE)
-          --graph                : Graph output (default: FALSE)
           --help (-h)            : show help 
           --id                   : Specify row Id for more details (default: NA)
           --keyword (-k)         : Search keywords; multiple keys are OR'd unless search_and == TRUE 
-          --nolist               : Exclude article listing from author report (default: FALSE)
           --outdir (-o)          : Store plots to outdir (default: OUTDIR)
           --output-format (-f)   : Select output format (default: svg)
           --printonly (-p)       : Show only print content (default: FALSE)
           --range (-r)           : YYYY-MM-DD:YYYY-MM-DD (default: NA)
-          --sampledb             : Sample AuthorDB for validation (default: FALSE)
-          --search-and           : Perform Boolean AND keyword search (default: FALSE)
           --sect (-s)            : Filter by section (default: NA)
-          --use-cache (-u)       : Force using cached files (default: FALSE)
           --verbose (-v)         : Print verbose messages; each use increments the verbosity level (
                                    default: 0)
           --version (-V)         : show version info 
