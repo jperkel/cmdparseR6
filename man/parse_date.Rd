@@ -7,8 +7,18 @@
 parse_date(d)
 }
 \arguments{
-\item{d}{a date string: "YYYY-MM-DD", "YYYY-MM", or "YYYY"}
+\item{d}{a date string: "YYYY-MM-DD", "YYYYMMDD", "YYYY-MM", or "YYYY". Not a vectorized function!}
+}
+\value{
+a vector of integers: c(year, month, day), c(year, month, NA) or c(year, NA, NA)
 }
 \description{
 parse_date function
+}
+\examples{
+parse_date("2025-12-31")
+parse_date("20251231")
+parse_date("2025-12")
+parse_date("2025")
+
 }

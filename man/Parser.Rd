@@ -2,9 +2,22 @@
 % Please edit documentation in R/R6-cmdparser.R
 \name{Parser}
 \alias{Parser}
-\title{The Parser class}
+\title{R6 class representing a command-line Parser}
 \description{
-Parser class description
+A 'parser' is created for a script with a name, description, version and help string
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{name}}{description name Script name}
+
+\item{\code{desc}}{Script description}
+
+\item{\code{ver}}{Software version}
+
+\item{\code{help}}{Help string}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -23,7 +36,7 @@ Parser class description
 \if{html}{\out{<a id="method-Parser-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Parser-new}{}}}
 \subsection{Method \code{new()}}{
-Initialization function
+Create a new parser
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$new(name, desc, ver, help = TRUE)}\if{html}{\out{</div>}}
 }
@@ -41,26 +54,43 @@ Initialization function
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+a new 'Parser' object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Parser-add_arguments"></a>}}
 \if{latex}{\out{\hypertarget{method-Parser-add_arguments}{}}}
 \subsection{Method \code{add_arguments()}}{
-Add arguments as a list of lists with entries for lparam, sparam, variable, default, type and help)
+Add arguments
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$add_arguments(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{a list of lists with entries for lparam, sparam, variable, default, type and help}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Parser-add_commands"></a>}}
 \if{latex}{\out{\hypertarget{method-Parser-add_commands}{}}}
 \subsection{Method \code{add_commands()}}{
-Add commands as a list of lists with entries for command name, help and (optionally) subcmd
+Add commands
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$add_commands(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{a list of lists with entries for command name, help and (optionally) subcmd}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Parser-version"></a>}}

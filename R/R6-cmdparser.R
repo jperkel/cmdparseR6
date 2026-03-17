@@ -13,27 +13,29 @@ is_sparam <- function(string) {
 }
 
 
-#' The Parser class
-#' @description Parser class description
-#' @param name Script name
-#' @param desc Script description
-#' @param ver Software version
-#' @param help Help string
+#' R6 class representing a command-line Parser
+#' @description
+#' A 'parser' is created for a script with a name, description, version and help string
 #'
 #' @export
 Parser <- R6::R6Class("Parser",
                       public = list(
+                        #' @field name description name Script name
                         name = NULL,
+                        #' @field desc Script description
                         desc = NULL,
+                        #' @field ver Software version
                         ver = NULL,
+                        #' @field help Help string
                         help = NULL,
 
                         #' @description
-                        #' Initialization function
+                        #' Create a new parser
                         #' @param name Program name
                         #' @param desc Program description
                         #' @param ver Software version
                         #' @param help Add -h (help) and -V (version) flags (default = TRUE)
+                        #' @return a new 'Parser' object
                         initialize = function(name, desc, ver, help = TRUE) {
                           self$name <- name
                           self$desc <- desc
@@ -43,7 +45,8 @@ Parser <- R6::R6Class("Parser",
                         },
 
                         #' @description
-                        #' Add arguments as a list of lists with entries for lparam, sparam, variable, default, type and help)
+                        #' Add arguments
+                        #' @param ... a list of lists with entries for lparam, sparam, variable, default, type and help
                         #'
                         add_arguments = function(...) {
                           arglist <- list(...)
@@ -54,7 +57,8 @@ Parser <- R6::R6Class("Parser",
                         },
 
                         #' @description
-                        #' Add commands as a list of lists with entries for command name, help and (optionally) subcmd
+                        #' Add commands
+                        #' @param ...  a list of lists with entries for command name, help and (optionally) subcmd
                         #'
                         add_commands = function(...) {
                           cmdlist <- list(...)
