@@ -15,6 +15,10 @@ is_sparam <- function(string) {
 
 #' The Parser class
 #' @description Parser class description
+#' @param name Script name
+#' @param desc Script description
+#' @param ver Software version
+#' @param help Help string
 #'
 #' @export
 Parser <- R6::R6Class("Parser",
@@ -31,11 +35,11 @@ Parser <- R6::R6Class("Parser",
                         #' @param ver Software version
                         #' @param help Add -h (help) and -V (version) flags (default = TRUE)
                         initialize = function(name, desc, ver, help = TRUE) {
-                          self$name = name
-                          self$desc = desc
-                          self$ver = ver
-                          self$help = help
-                          private$cmdline = paste(commandArgs(trailingOnly = T), collapse = ' ')
+                          self$name <- name
+                          self$desc <- desc
+                          self$ver <- ver
+                          self$help <- help
+                          private$cmdline <- paste(commandArgs(trailingOnly = T), collapse = ' ')
                         },
 
                         #' @description
@@ -320,7 +324,14 @@ Parser <- R6::R6Class("Parser",
 
 
 #' parse_date function
-#' @param d a date string: "YYYY-MM-DD", "YYYY-MM", or "YYYY"
+#' @param d a date string: "YYYY-MM-DD", "YYYYMMDD", "YYYY-MM", or "YYYY". Not a vectorized function!
+#' @return a vector of integers: c(year, month, day), c(year, month, NA) or c(year, NA, NA)
+#' @examples
+#' parse_date("2025-12-31")
+#' parse_date("20251231")
+#' parse_date("2025-12")
+#' parse_date("2025")
+#'
 #' @export
 parse_date <- function(d) {
   year <- NA
@@ -328,8 +339,9 @@ parse_date <- function(d) {
   day <- NA
   error <- FALSE
 
-  if (grepl('^[0-9]{4}-[0-9]{2}-[0-9]{2}$', d) == TRUE) {
-    myDate <- try(as.Date (d, format = "%Y-%m-%d"))
+  # YYYY-MM-DD or YYYYMMDD
+  if (grepl('^[0-9]{4}-?[0-9]{2}-?[0-9]{2}$', d) == TRUE) {
+    myDate <- try(as.Date(d, tryFormats = c("%Y-%m-%d", "%Y%m%d")))
     if (class (myDate) == "try-error" || is.na(myDate)) {
       error <- TRUE
     }
@@ -337,15 +349,15 @@ parse_date <- function(d) {
     month <- as.integer(format(myDate, "%m"))
     day <- as.integer(format(myDate, "%d"))
   }
-  else if (grepl('^[0-9]{8}$', d) == TRUE) {
-    myDate <- try(as.Date (d, format = "%Y%m%d"))
-    if (class (myDate) == "try-error" || is.na(myDate)) {
-      error <- TRUE
-    }
-    year <- as.integer(format(myDate, "%Y"))
-    month <- as.integer(format(myDate, "%m"))
-    day <- as.integer(format(myDate, "%d"))
-  }
+  # else if (grepl('^[0-9]{8}$', d) == TRUE) {
+  #   myDate <- try(as.Date (d, format = "%Y%m%d"))
+  #   if (class (myDate) == "try-error" || is.na(myDate)) {
+  #     error <- TRUE
+  #   }
+  #   year <- as.integer(format(myDate, "%Y"))
+  #   month <- as.integer(format(myDate, "%m"))
+  #   day <- as.integer(format(myDate, "%d"))
+  # }
   else if (grepl('^[0-9]{4}-[0-9]{2}$', d) == TRUE) {
     year <- as.integer(substr(d, 1, 4))
     month <- as.integer(substr(d, 6, 7))
